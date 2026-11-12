@@ -8,10 +8,10 @@ typedef struct {
     TSparseMatrix *A;
     TSparseMatrix *B;
 
-    int *a_first;  /* first stored A entry in each A row */
-    int *a_next;   /* next A entry in the same row */
-    int *b_first;  /* first stored B entry in each B row */
-    int *b_next;   /* next B entry in the same row */
+    int *a_first;  
+    int *a_next;   
+    int *b_first;  
+    int *b_next;  
 
     unsigned int next_row;
     size_t capacity;
@@ -20,7 +20,6 @@ typedef struct {
     pthread_mutex_t lock;
 } Shared;
 
-/* Add one completed entry to C. Caller holds the lock. */
 static int add_result(Shared *s, int row, int col, double value)
 {
     if (value == 0.0) return 1;
@@ -55,7 +54,6 @@ static void *work_on_rows(void *argument)
 {
     Shared *s = argument;
 
-    /* These three arrays belong only to this worker. */
     double *sum = calloc(s->B->ncols, sizeof(double));
     unsigned char *used = calloc(s->B->ncols, sizeof(unsigned char));
     int *touched = malloc((size_t)s->B->ncols * sizeof(int));
@@ -73,7 +71,6 @@ static void *work_on_rows(void *argument)
     for (;;) {
         unsigned int row;
 
-        /* Claim one output row. */
         pthread_mutex_lock(&s->lock);
         if (s->failed || s->next_row == s->A->nrows) {
             pthread_mutex_unlock(&s->lock);
@@ -84,12 +81,10 @@ static void *work_on_rows(void *argument)
 
         int touched_count = 0;
 
-        /* Visit every stored A entry in this row. */
         for (int ai = s->a_first[row]; ai != -1; ai = s->a_next[ai]) {
             COOElement a = s->A->elements[ai];
             int k = a.c;
 
-            /* Visit every stored B entry in row k. */
             for (int bi = s->b_first[k]; bi != -1; bi = s->b_next[bi]) {
                 COOElement b = s->B->elements[bi];
                 int col = b.c;
@@ -102,10 +97,6 @@ static void *work_on_rows(void *argument)
             }
         }
 
-        /*
-         * Only completed results are added to C.
-         * The lock is NOT held during multiplication.
-         */
         pthread_mutex_lock(&s->lock);
 
         if (!s->failed) {
@@ -120,7 +111,6 @@ static void *work_on_rows(void *argument)
 
         pthread_mutex_unlock(&s->lock);
 
-        /* Clear only columns used by this row. */
         for (int i = 0; i < touched_count; ++i) {
             int col = touched[i];
             sum[col] = 0.0;
@@ -158,7 +148,6 @@ TSparseMatrix *spmm_parallel(TSparseMatrix *A, TSparseMatrix *B,
     s.C->nnz = 0;
     s.C->elements = NULL;
 
-    /* If multiplication cannot produce entries, return an empty C. */
     if (A->nrows == 0 || B->ncols == 0 ||
         A->nnz == 0 || B->nnz == 0) {
         return s.C;
@@ -175,10 +164,6 @@ TSparseMatrix *spmm_parallel(TSparseMatrix *A, TSparseMatrix *B,
     for (unsigned int r = 0; r < A->nrows; ++r) s.a_first[r] = -1;
     for (unsigned int r = 0; r < B->nrows; ++r) s.b_first[r] = -1;
 
-    /*
-     * Link each stored entry to the next entry in its row.
-     * This is the simpler version of the row lookup from step 10.
-     */
     for (unsigned int i = 0; i < A->nnz; ++i) {
         int r = A->elements[i].r;
         int c = A->elements[i].c;
