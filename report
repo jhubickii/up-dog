@@ -1,0 +1,39 @@
+High-Performance Parallel Sparse Matrix-Matrix Multiplication (SpMM)
+Couurse: CSE 3100 Systems Programming
+Members: Denae-Raenn Green, Harold Vilchez, & Jesse Hubicki
+
+1. Objective and Scope
+  In this project we replaced dense 2D array storage with a flat, spave-efficient Coordinate (COO)
+  sparse-matrix representation and implemented two Matrix-Matrix multiplicatio engines for real-world
+  sparse matrices streamed from the NIST/SuiteSparse Matrix Market ecosystem: a single-threaded sequential baseline 
+  (spam_sequential) serving as the mathematical ground truth, and a multi-threaded parallel engine (spam_parallel)
+  built on the POSIX Threads API, with (1) correctness protocol that verifies the parallel engine against the sequential
+  basline cell-by-cell at a floating-point tolerance of EPSILOn = 1e-7 across thread counts 1, 2, 4, 8, and 16 and (2)
+  an empiral performance study measuring speedup on ten real-world SuiteSparse matrices on two distinct hardware patforms,
+  a university lab workstation and a personal laptp.
+
+2. Hardware Platform Specifications
+3. Test Matrices
+
+4.Methodolgy
+  Data Strcuture: Each matrix stores only non-zeros, as flat arrays of {int r; int c; double val;} triplets
+                  of length exatly nnz. No dense row-pointer strcuture remains anywhere in the code.
+
+  Sequential Baseline:
+
+  Parallel Engine: A shred counter hands out rows of A to worker threads one at a time - a dynamix row queue. Real sparse
+                  matruces have irregular row densities, so a static split would leave threads holding dense rows while others idle;
+                  the queue naturally rebalnces. Each claimed row is accumulated entirely in thread-local buffers, so no shared data
+                  is touched during the multiplicatuon loop itself - no locks guard individual products, satisfying the assignements
+                  race-safety requirement. Finished rows merge into the shared output under one lock acquisition per roww.
+  
+  Correctness: For each thread count {1, 2, 4, 8, 16}, the parallel result is compared cell-by-cell against the sequential reult at 
+              EPSILON = 1e-7, in both directions - cells missing from the parallel output and "phantom" cells represents only
+              in it both count as failures. Both results are first folded into hsh maps keyed b (row, col) that sum duplicate entries,
+              making the comparison O(nnz) instead of O(nnz^2) - essential for matrices with millions of non-zeros and independent of 
+              storage order.
+  Timing: Wall-clock time via CLOCK_MONOTONIC, wrapped around the engie call only - file loading is exculded. 
+
+  
+
+  
