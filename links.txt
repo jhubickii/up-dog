@@ -1,0 +1,16 @@
+SMALL - THREE 1000 x 1000 to 5000 x 5000
+https://math.nist.gov/MatrixMarket/data/SPARSKIT/drivcav_old/cavity23.html
+https://math.nist.gov/MatrixMarket/data/SPARSKIT/drivcav/e20r0500.html
+https://math.nist.gov/MatrixMarket/data/SPARSKIT/drivcav/e20r0500.html
+
+
+MEDIUM FOUR 5000x5000 to 20,000 x 20,000 
+https://math.nist.gov/MatrixMarket/data/SPARSKIT/drivcav/e30r0000.html
+https://math.nist.gov/MatrixMarket/data/SPARSKIT/drivcav/e30r0100.html
+https://math.nist.gov/MatrixMarket/data/SPARSKIT/drivcav/e30r0500.html
+https://math.nist.gov/MatrixMarket/data/SPARSKIT/drivcav/e30r1000.html
+
+LARGE THREE - past 20,000
+https://math.nist.gov/MatrixMarket/data/SPARSKIT/fidap/fidapm11.html
+https://math.nist.gov/MatrixMarket/data/NEP/airfoil/af23560.html
+https://math.nist.gov/MatrixMarket/data/NEP/crystal/cry10000.html - This is a medium level graph but i really couldn't find another large matrix that fit the tester's specs. 
