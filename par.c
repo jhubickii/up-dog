@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "matrix.h"
+#include <stdint.h>
 
 typedef struct {
     TSparseMatrix *A;
