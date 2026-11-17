@@ -32,7 +32,10 @@ Members: Denae-Raenn Green, Harold Vilchez, & Jesse Hubicki
               in it both count as failures. Both results are first folded into hsh maps keyed b (row, col) that sum duplicate entries,
               making the comparison O(nnz) instead of O(nnz^2) - essential for matrices with millions of non-zeros and independent of 
               storage order.
-  Timing: Wall-clock time via CLOCK_MONOTONIC, wrapped around the engie call only - file loading is exculded. 
+  Timing: Wall-clock time via CLOCK_MONOTONIC, wrapped around the engie call only - file loading is exculded. Each configuration runs
+          N >= 3 times. Speedup = sequential time / best parallel time
+
+5. Results
 
   
 
