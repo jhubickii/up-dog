@@ -13,13 +13,28 @@ Members: Denae-Raenn Green, Harold Vilchez, & Jesse Hubicki
   a university lab workstation and a personal laptp.
 
 2. Hardware Platform Specifications
+   Property                                Value
+    CPU Model                              Apple M3 (4 Performance + 4 Efficienct cores)
+    Physica cores/logical threads          8 / 8 (no SMT)
+    RAM                                    16 GB
+    Operating System                       macOS 27.0.1 (build 23A434), kernel Darwin 27.0.0
+    Compiler                               Apple clang 21.0.0.0 (ckabg-2100.3.34.2)
+
 3. Test Matrices
+    Ten real, general (non-symmetric) matrcies in MAtrix Market coordinate format, all dimensionally compliant with
+    the three required size classes (URLS in links.txt)
 
 4.Methodolgy
   Data Strcuture: Each matrix stores only non-zeros, as flat arrays of {int r; int c; double val;} triplets
                   of length exatly nnz. No dense row-pointer strcuture remains anywhere in the code.
 
-  Sequential Baseline:
+
+  Sequential Baseline:  B's entries are bucketed by row (counting sort) so each row is a contiguous slice. For every non-zero a₍ᵢₖ₎ 
+                        of A we emit one triplet (i, j, a₍ᵢₖ₎·b₍ₖⱼ₎) per non-zero in row k of B, with the total count pre-computed before allocation.
+                        Products are sorted by (row, col), equal coordinates are summed, exact zeros are dropped, and the result is compacted in place. 
+                        This output is the ground truth.
+
+
 
   Parallel Engine: A shred counter hands out rows of A to worker threads one at a time - a dynamix row queue. Real sparse
                   matruces have irregular row densities, so a static split would leave threads holding dense rows while others idle;
