@@ -20,6 +20,13 @@ Members: Denae-Raenn Green, Harold Vilchez, & Jesse Hubicki
     Operating System                       macOS 27.0.1 (build 23A434), kernel Darwin 27.0.0
     Compiler                               Apple clang 21.0.0.0 (ckabg-2100.3.34.2)
 
+    Property                                Value
+    CPU Model                               Intel i7-14700
+    Physical cores/logical threads          20 cores & 28 threads
+    RAM                                     16 GB 
+    Operating Systems                       Windows 11 Enterprise
+    Compiler                                GCC
+
 3. Test Matrices
     Ten real, general (non-symmetric) matrcies in MAtrix Market coordinate format, all dimensionally compliant with
     the three required size classes (URLS in links.txt)
